@@ -7,7 +7,7 @@
 - step 4: "ruby game.rb"
 - step 5: follow the instruction
 
-* To run spec *
+*To run spec*
 
 - step 6: rspec spec/game_spec.rb
 

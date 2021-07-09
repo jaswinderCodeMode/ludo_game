@@ -13,19 +13,15 @@ class Player
 end
 
 class Game
+  # attr_accessor :no_of_players
 
-  def collect_inputs
-    puts "Enter the number of Players"
-    no_of_players = gets.chomp
-    no_of_players = no_of_players.to_i
-    puts "Enter the value of M(points to accumulate)"
-    total_points = gets.chomp
-    total_points = total_points.to_i
-    [no_of_players, total_points]
+  def initialize(no_of_players = read_players , total_points = read_points)
+    @no_of_players = no_of_players.to_i
+    @total_points = total_points.to_i
   end
 
-  def generate_random_turns(no_of_players)
-    (0...no_of_players).collect{|player_no| player_no}.shuffle
+  def generate_random_turns
+    (0...@no_of_players).collect{|player_no| player_no}.shuffle
   end
 
 
@@ -46,11 +42,20 @@ class Game
     end
   end
 
+  def read_players
+    puts "Enter the number of Players"
+    no_of_players = gets.chomp
+  end
+
+  def read_points
+    puts "Enter the value of M(points to accumulate)"
+    total_points = gets.chomp
+  end
+
   def start
-    no_of_players, total_points = collect_inputs
-    player_turns = generate_random_turns(no_of_players)
+    player_turns = generate_random_turns
     players = []
-    (1..no_of_players).each_with_index do |player, indx|
+    (1..@no_of_players).each_with_index do |player, indx|
       players << Player.new("Player-#{indx+1}")
     end
 
@@ -59,7 +64,7 @@ class Game
     again = ""
     winner_count = 0
     while(true)
-      i = i % no_of_players
+      i = i % @no_of_players
       current_player = players[player_turns[i]]
       i +=1 and next if current_player.complete
       
@@ -89,9 +94,9 @@ class Game
         current_player.previous_step = dice_points
         puts "\n dice value = " + dice_points.to_s.green
 
-        if (current_player.points + dice_points) < total_points
+        if (current_player.points + dice_points) < @total_points
           current_player.points = current_player.points + dice_points
-        elsif current_player.points + dice_points == total_points
+        elsif current_player.points + dice_points == @total_points
           current_player.points = current_player.points + dice_points
           current_player.complete = true
           puts "congratulation!! #{current_player.name} completed the points".yellow
@@ -100,12 +105,9 @@ class Game
       end
       update_rank(players)
       print_table(players)
-      break if winner_count + 1 == no_of_players
+      break if winner_count + 1 == @no_of_players
     end
     puts "\nfinal result\n".yellow
     print_table(players)
   end
-
 end
-
-Game.new.start
